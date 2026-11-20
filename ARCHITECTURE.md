@@ -13,6 +13,34 @@ MCP Gatekeeper handles both transports uniformly by decoupling **transport proxi
 
 ## 2. System Topology
 
+The diagram below shows the two supported transport paths and the shared approval flow. Claude Desktop's local STDIO servers are wrapped directly; remote MCP traffic must be routed through the HTTP proxy.
+
+```mermaid
+flowchart LR
+    subgraph Desktop[Claude Desktop]
+        CD[Claude Desktop client]
+        LP[Local MCP server]
+        CD <-->|STDIO JSON-RPC| SP[STDIO proxy]
+        SP <-->|STDIO| LP
+    end
+
+    subgraph Remote[Claude Web or remote connector]
+        CW[Claude Web]
+        RP[Remote MCP server]
+        CW <-->|HTTP / SSE| HP[HTTP proxy]
+        HP <-->|HTTP / SSE| RP
+    end
+
+    SP -->|Approval request over localhost| Broker[Approval broker]
+    HP -->|Approval request over localhost| Broker
+    Broker -->|Queue pending request| UI[Always-on-top popup]
+    UI -->|Allow or Block| Broker
+    Broker -->|Decision| SP
+    Broker -->|Decision| HP
+```
+
+For an intercepted tool call, the proxy waits for the broker's decision. Allow forwards the original request to the MCP server; Block returns a JSON-RPC error to Claude without calling the server.
+
 ```
 +-------------------+        STDIO         +-------------------+
 |  Claude Desktop   | <==================> |   StdioMCPProxy   | ---> Local MCP Server
