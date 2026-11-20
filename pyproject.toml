@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp-gatekeeper"
+version = "1.0.0"
+description = "Interactive human-in-the-loop security gatekeeper for Model Context Protocol (MCP) requests from Claude Desktop and Claude Web."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = []
+
+[project.scripts]
+mcp-gatekeeper = "mcp_gatekeeper.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

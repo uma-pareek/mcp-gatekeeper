@@ -1,0 +1,2 @@
+[console_scripts]
+mcp-gatekeeper = mcp_gatekeeper.cli:main

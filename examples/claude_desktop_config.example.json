@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/Documents"]
+    },
+    "demo-local": {
+      "command": "python3",
+      "args": ["/path/to/mcp-gatekeeper/examples/mock_mcp_server.py", "--transport", "stdio"]
+    }
+  }
+}
