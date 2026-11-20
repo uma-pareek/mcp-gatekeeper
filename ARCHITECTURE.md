@@ -17,26 +17,14 @@ The diagram below shows the two supported transport paths and the shared approva
 
 ```mermaid
 flowchart LR
-    subgraph Desktop[Claude Desktop]
-        CD[Claude Desktop client]
-        LP[Local MCP server]
-        CD <-->|STDIO JSON-RPC| SP[STDIO proxy]
-        SP <-->|STDIO| LP
-    end
-
-    subgraph Remote[Claude Web or remote connector]
-        CW[Claude Web]
-        RP[Remote MCP server]
-        CW <-->|HTTP / SSE| HP[HTTP proxy]
-        HP <-->|HTTP / SSE| RP
-    end
-
-    SP -->|Approval request over localhost| Broker[Approval broker]
-    HP -->|Approval request over localhost| Broker
-    Broker -->|Queue pending request| UI[Always-on-top popup]
-    UI -->|Allow or Block| Broker
-    Broker -->|Decision| SP
-    Broker -->|Decision| HP
+    ClaudeDesktop -->|STDIO| StdioProxy
+    StdioProxy -->|STDIO| LocalServer
+    ClaudeWeb -->|HTTP or SSE| HttpProxy
+    HttpProxy -->|HTTP or SSE| RemoteServer
+    StdioProxy -->|Approval request| Broker
+    HttpProxy -->|Approval request| Broker
+    Broker -->|Show request| Popup
+    Popup -->|Allow or Block| Broker
 ```
 
 For an intercepted tool call, the proxy waits for the broker's decision. Allow forwards the original request to the MCP server; Block returns a JSON-RPC error to Claude without calling the server.
